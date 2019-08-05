@@ -78,15 +78,15 @@
    <img src="../../public/static/img/withoutYou.jpg" alt="">
   </div>
   <div class="durationTime">
-<h5>我真的好想你</h5>
+<h5>{{songName}}</h5>
 <div class="time"></div>
  {{minTime+":"+secTime}}/{{totalTime}}
    </div>
  <div class="main">
-    <button  @click="pause"><img src="../../public/static/img/skipBack.svg" alt=""></button>
+    <button  @click="previousSong"><img src="../../public/static/img/skipBack.svg" alt=""></button>
     <button  v-show="paused" @click="play"><img src="../../public/static/img/play.svg" alt=""></button>
     <button v-show="playing" @click="pause"><img src="../../public/static/img/pause.svg" alt=""></button>
-    <button  @click="pause"><img src="../../public/static/img/skipForward.svg" alt=""></button>
+    <button  @click="nextSong"><img src="../../public/static/img/skipForward.svg" alt=""></button>
  </div>
  <div class="volume">
    <div v-if="hasMuted == false">
@@ -127,21 +127,23 @@ return{
       progress:null,
       hasMuted:false,
       hasLoud:false,
+      songName:"",
+      songPicture:"",
       songList:[
           {
-            id:1,title:"Without You",src:require("@/assets/audio/withoutYou.mp3")
+            id:1,title:"Without You",src:require("@/assets/audio/withoutYou.mp3"),pictureSrc:require("../../public/static/img/withoutYou.jpg")
           },
           {
-            id:2,title:"where Is My Ex",src:require("@/assets/audio/whereIsMyEx.mp3")
+            id:2,title:"where Is My Ex",src:require("@/assets/audio/whereIsMyEx.mp3"),pictureSrc:require("../../public/static/img/withoutYou.jpg")
           },
            {
-            id:3,title:"Love Song For You",src:require("@/assets/audio/loveSongForYou.mp3")
+            id:3,title:"Love Song For You",src:require("@/assets/audio/loveSongForYou.mp3"),pictureSrc:require("../../public/static/img/withoutYou.jpg")
           },
            {
-            id:4,title:"Evaporation",src:require("@/assets/audio/evaporation.mp3")
+            id:4,title:"Evaporation",src:require("@/assets/audio/evaporation.mp3"),pictureSrc:require("../../public/static/img/withoutYou.jpg")
           },
            {
-            id:5,title:"Courage",src:require("@/assets/audio/courage.mp3")
+            id:5,title:"Courage",src:require("@/assets/audio/courage.mp3"),pictureSrc:require("../../public/static/img/withoutYou.jpg")
           }
         ],
 }
@@ -187,6 +189,42 @@ return{
       var totalTime = vm.totalAllTime;
       progress.style.width = stopTime / totalTime * 100+ '%';
       },
+      previousSong:function(e){
+        
+        var onMusicNum = this.$refs.audio.getAttribute("id");
+         var length = this.songList.length;
+       if(onMusicNum-1 <= 0)
+       {
+         
+         this.$refs.audio.setAttribute("id", this.songList[length-1].id);
+         this.$refs.audio.setAttribute("src", this.songList[length-1].src);
+       }
+       else
+       {
+         this.$refs.audio.setAttribute("id", this.songList[onMusicNum-1].id);
+         this.$refs.audio.setAttribute("src", this.songList[onMusicNum-1].src);
+       }
+        
+      },
+      nextSong:function(){ 
+
+         var onMusicNum = parseInt(this.$refs.audio.getAttribute("id",10));
+         var length = this.songList.length;
+       if((onMusicNum+1) > length)
+       {
+         alert()
+         this.$refs.audio.setAttribute("id", this.songList[0].id);
+         this.$refs.audio.setAttribute("src", this.songList[0].src);
+         console.log(this.songList[0].title)
+         this.songName = this.songList[0].title;
+       }
+       else
+       {
+         this.$refs.audio.setAttribute("id", this.songList[onMusicNum].id);
+         this.$refs.audio.setAttribute("src", this.songList[onMusicNum].src);
+         this.songName = this.songList[onMusicNum+1].title;
+       }
+      }
     // changeCurrentTime:function(){
     //   alert()
     // }
@@ -195,13 +233,14 @@ return{
     playing() { return !this.paused; }
   },
   watch:{
-    durationTime:function(val){
+    durationTime:function(){
      
     }
   },
   mounted(){
     // this.$refs.audio.src = this.songList[0].src
     this.$refs.audio.setAttribute("src", this.songList[0].src);
+    this.$refs.audio.setAttribute("id", this.songList[0].id);
 
   }
 }
